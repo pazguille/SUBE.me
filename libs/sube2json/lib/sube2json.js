@@ -26,7 +26,7 @@ var spawn = require('child_process').spawn,
 					"latitude": e[1],
 					"longitude": e[2],
 					"address": e[4].split(' - ')[0],
-					"state": e[4].split(' - ')[1]
+					"state": e[4].split(' - ')[1].toLowerCase()
 				}) + '\n';
 			});
 
@@ -38,4 +38,4 @@ var spawn = require('child_process').spawn,
 		});
 	}).end();
 
-exports.SUBE = map;
+module.exports = map;

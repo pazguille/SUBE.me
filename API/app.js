@@ -22,18 +22,6 @@ var express = require('express'),
 
 mongoose.connect('mongodb://localhost/sube');
 
-function capitalize(req, res, next) {
-	var state = decodeURIComponent(req.query.query).split(' ');
-
-	state.forEach(function (e, i) {
-		state[i] = e[0].toUpperCase() + e.substr(1);
-	});
-
-	req.query.query = state.join(' ');
-
-	next();
-}
-
 /**
  * App Configuration
  */
@@ -68,16 +56,21 @@ app.configure("production", function () {
 /**
  * Routes
  */
-app.get('/api/places', function (req, res, next) {
+app.get('/', function (req, res, next) {
+	res.redirect('/places');
+});
+
+app.get('/places', function (req, res, next) {
 	Sube.find(function (err, data) {
 		res.json(data);
 	});
 });
 
-// http://dev.virtualearth.net/REST/v1/Locations/47.64054,-122.12934?key=BingMapsKey
-// http://maps.googleapis.com/maps/api/geocode/json?latlng=-34.70253,-58.39193&sensor=true
-app.get('/api/places/search', capitalize, function (req, res, next) {
-	Sube.find({'state': req.query.query}, function (err, data) {
+app.get('/places/:state', function (req, res, next) {
+	var state = req.params.state.split('_').join(' '),
+		exp = new RegExp(state);
+
+	Sube.find({'state': exp}, function (err, data) {
 		res.json(data);
 	});
 });
